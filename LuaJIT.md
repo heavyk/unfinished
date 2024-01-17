@@ -18,3 +18,7 @@ then, it finally dawned on me the DynASM is already doing most of that work alre
 
 so that's my idea in a nutshell and I know I'm sending you an email from gmail, so I don't expect a response; just wanted to send it...
 cheers, kenny
+
+---
+
+I wrote that quite a while back. I was convinced I was going to send the email when I wrote it, but I never did. consequewntly, my ideas evolved since then (see YueJIT), but it's fun to see where they came from.
