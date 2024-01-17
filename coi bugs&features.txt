@@ -1,0 +1,141 @@
+(right) click on right-side product should bring up stats
+  - already displaying stats on sidebar so weird to see a list of products
+
+vehicles list (for easy upgrades)
+- ability to edit the names
+- click to goto/follow
+- also nice for JD to see all the names
+
+recipe panel clicking on the greyed out machine should take me to the research
+  - also would be nice to have it show the little popup shown in the "UNLOCKS" section of  research panel containing power/people/maintenance/cost requirements so I can compare recipe quantities for each higher tier machine
+
+storages power cost don't show in research panel
+growth boost requires >1 health, says requires 1
+
+shift+pause toggles the building paused state, not construction (or vice-versa)
+flip/reverse tool (like unity tool) - maybe holding shift w/ unity tool selected flips
+
+fuel truck top-up
+- when a fuel truck is on return trip back to station, fill any other diggy & choppy boys up nearby (also nearby idle trucks?)
+- when fuel truck is idle at the station, do diesel tasks in the main queue (like fill fluid strorages that want diesel)
+
+tree harvester
+- when unassigning a truck, it's possible to unassign a truck that's currently being loaded (loading only part of the currently chopping tree)
+
+chem plant
+- fertilizer recipe seems like it's missing water as an import bc/ 12 nh3 + 18 o2 == 30 units -- does o2 + nh3 produce that much water? 2x h3 + 3x o2 = h6o6 -- shouldn't it be 2x o2 + 2x h3 = o4h6, h2o+h2o+h2o
+
+cargo docks
+- see ETA for ship
+
+deconstruct when pipe/belt is empty (pay unity up front)
+when constructing w/ unity, all items are set to construct when unity is available (building turns purple?), and so construct w/ ubit always works -- just wait till next month
+6-way pipe connectors
+
+
+ODDITIES
+for CO2, small smokestack provides dumped/disposed, but large smokestack goes under "total consumption"
+vehicle delivered construction doesn't obey partially loaded option (if 30/100 parts are available, it'll take 30 immediately instead of waiting for 60)
+weird that it shows cargo ships found/repaired (but NOT  'used / free'  OR  'used / total')
+DOCKED (can say if the crew is unloaded/loaded)
+muntiple clicks in the same area should rotate through entities in z-order, insatad on only picking top-most
+weird that concrete mixer 3 is in basic computing tech, but requires no computing. feels like it should go in construction 4 or its own tech.
+
+
+
+INTERFACE STUFF
+ability to place connectors anywhere
+enable connectors to be beside one another (even though they still don't work)
+place calculator reselt in small textbox above search field, allowing transports/buildings panel to stay where it is.
+when pressing 't' to open transports, and calculator resumt is showing, it should open transports, not close.
+when clicking on (cargo ships 1/1) on top, should open a panel with a list of all cargo ships and their current status (docked, arriving, departing, eta), thier cargo modules and cargo (maybe), reduce fuel option, workers, gas tank, pause button
+when clicking on (vehicles 140/140) on top, should open a panel with a list of all vehicles and their current status (idle, navigating, eta), thier cargo (maybe), gas tank, pause button.
+when mouse scromming over notifications where there are more than 5(?), it scrolls the notifications
+
+----
+
+vp2 on top of sand bar
+(left side)
+	import limestone, do cement, import coal
+	*vp2 build*,
+	import iron, mine copper, electronic2
+	cp4 production
+slag for sw (get rid of slag mountain)
+remove need for forestry (remove planters&harvesters, import from rubber & household appliances)
+exhaust scrubbing for oil/incineration
+import coal (for cement), h for cement
+
+coal power up top (looks like it goes down to -3) (use gw pumps)
+electronics 2 on right side needs rimming and diesel refinery for hydrogen/chlorene/naptha)
+electronics 2 also up top (use copper & rubber)
+
+biomass to compost (less waste)
+
+move digger up to dig dirt
+put rows of 6x farms up left
+put town up top & connect farms/food to it
+
+
+-----
+
+walls for coasl ramp
+glass (BELT)
+coal import/mine (top)
+use hydrogen so diesel isn't slow
+
+
+move diggers to limestone
+desal recipe
+front dirt bucket request dirt
+
+export rubber
+plug in exhaust
+sand ramp to iron
+ramp in front of copper
+
+----
+
+goat pipe crude (24 pumps for 450 pipe
+tree planting squares
+don't dig coal ramp
+
+town/water/rubber/poop priorities
+turn off diesel power
+sand accept assigned only
+reverse coal lps pipes
+
+---
+
+bricks (and soon smelters) exhaust pipe down to scrubbers
+expand slag mountain & slag contract
+BACKWATER PRIORITY
+24x 24 lp steam
+24 desals
+16 pumps
+10 dumps
+
+priorities for water and power (venting steam & exhaust scrubbing)
+
+---
+
+move farms over to 
+find water for farms (diesel on pier? -> desal?)
+e2 for use hydrogen
+crack heavy into naptha -> diesel, (whatever's left) fg -> H 
+
+
+hydrogen power
+==============
+
+3x boilers @72 = 216
+18fg*8 = 144fg
+24np*4 = 120fg + 24sw
+
+
+move vp2 to left coast
+out in e2 where the tech labs are
+
+----
+
+1 VEG IN BELT (bug in happy april 400 save)
+
