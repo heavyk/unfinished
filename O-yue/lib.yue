@@ -1,0 +1,109 @@
+
+export is_fun = (v) -> "function" == type v
+export is_num = (v) -> "number" == type v
+export is_str = (v) -> "string" == type v
+export is_val = (v) -> ("function" != type v) and v != nil
+export is_obv = (v) -> ("table" == type v) and v.o
+export is_arr = (v) -> ("table" == type v) and v[1] != nil
+export is_tab = (v) -> ("table" == type v)
+export is_inf = (v) -> v == math.huge or v = -math.huge
+export is_nan = (v) -> v != v
+
+
+-- WIP :)
+_print = print
+export print = (...) ->
+	local cache = {}
+	sub_print = (t, indent) ->
+		if is_str t
+			_print indent .. '"' .. t .. '"'
+		elseif is_tab t
+			-- _print indent .. "(table)"
+			_print tostring(t) .. " ["
+			if t[1] != nil
+				for pos, val in ipairs t
+					sub_print val, indent .. "  "
+			_print "]"
+		else
+			_print indent .. tostring(val)
+
+	for i = 1, (select '#', ...)
+		sub_print (select i, ...), ""
+
+
+
+-- print = (...) ->
+-- 	local cache = {}
+-- 	sub_print = (t, indent) ->
+-- 		if is_str val
+-- 			_print indent .. '"' .. val .. '"'
+-- 		elseif is_tab t
+-- 			-- if cache[tostring(t)]
+-- 			-- 	_print indent .. "*" .. tostring(t)
+-- 			-- else
+-- 			-- 	cache[tostring(t)] = true
+
+-- 			if is_arr t -- array
+-- 				for _, val in ipairs t
+-- 					if is_arr val
+-- 						_print "arr"
+-- 					elseif is_tab val
+-- 						_print indent .. "["..pos.."]: " .. tostring(t) .." {"
+-- 						sub_print val, indent .. (string.rep " ", (string.len(pos)+8))
+-- 						_print indent .. string.rep( " ", string.len(pos)+6 ) .. "}"
+-- 					elseif is_str val
+-- 						_print indent .. "[" .. pos .. ']: "' .. val .. '"'
+-- 					else
+-- 						_print indent .. "[" .. pos .. "]: " .. tostring(val)
+-- 			else -- map
+-- 				for pos, val in pairs t
+-- 					if is_arr val
+-- 						_print "arr"
+-- 					elseif is_tab val
+-- 						_print indent .. "["..pos.."]: " .. tostring(t) .." {"
+-- 						sub_print val, indent .. (string.rep " ", (string.len(pos)+8))
+-- 						_print indent .. string.rep( " ", string.len(pos)+6 ) .. "}"
+-- 					elseif is_str val
+-- 						_print indent .. "[" .. pos .. ']: "' .. val .. '"'
+-- 					else
+-- 						_print indent .. "[" .. pos .. "]: " .. tostring(val)
+-- 		else
+-- 			_print indent .. tostring(val)
+
+-- 	for i in 1, (select '#', ...)
+-- 		sub_print (select i, ...)
+
+
+-- print_tab = (t) ->
+-- 	local cache = {}
+-- 	sub_print = (t, indent) ->
+-- 		if cache[tostring(t)]
+-- 			_print indent .. "*" .. tostring(t)
+-- 		else
+-- 			cache[tostring(t)] = true
+-- 			if is_tab t
+-- 				for pos, val in pairs t
+-- 					if is_arr val
+-- 						_print "arr"
+-- 					elseif is_tab val
+-- 						_print indent .. "["..pos.."] => " .. tostring(t) .." {"
+-- 						sub_print val, indent .. (string.rep " ", (string.len(pos)+8))
+-- 						_print indent .. string.rep( " ", string.len(pos)+6 ) .. "}"
+-- 					elseif is_str val
+-- 						_print indent .. "[" .. pos .. '] => "' .. val .. '"'
+-- 					else
+-- 						_print indent .. "[" .. pos .. "] => " .. tostring(val)
+-- 			else
+-- 				_print indent..tostring(t)
+
+-- 	if is_arr t
+-- 		_print tostring(t) .. " ["
+-- 		sub_print t, "  "
+-- 		_print "]"
+-- 	if is_tab t
+-- 		_print tostring(t) .. " ["
+-- 		sub_print t, "  "
+-- 		_print "]"
+-- 	else
+-- 		_print t
+-- 	return

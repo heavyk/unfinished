@@ -1,0 +1,35 @@
+
+my = {
+	obj: {} -- commas aren't necessary
+	another: {}
+}
+
+v1	= function my.obj:my_method (arg1, arg2, ...) do
+	print "hello world"
+end
+
+v2 = my.obj:my_method
+v2 1234 -- the same as:
+
+v3 = my.obj.my_method
+v3 my.obj.my_method, 1234
+
+
+t1 = function do
+	print "hello world"
+end
+--[[
+t2 = -> print "hello world"
+
+t3 = (t1, t2) ->
+	print "hello world #{t1} #{t2}"
+
+t4 = (t1, t2) -> print "hello world #{t1} #{t2}"
+]]
+t1()
+--[[
+t2()
+
+t3("one", "two")
+t4("one", "two")
+]]

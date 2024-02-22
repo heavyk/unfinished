@@ -1,0 +1,307 @@
+local ^
+
+yue = require 'yue'
+lpeg = require 'lpeglabel'
+
+import is_fun, is_num, is_str, is_val, is_obv, is_arr, is_tab, print from 'lib'
+
+print "lpeg", lpeg
+
+ensure = {
+	eq: (v1, v2) ->
+		if v1 != v2
+			print v1, "!=", v2
+			debug.traceback!
+			error "assertion failed"
+}
+
+O_generic = {
+	o: true
+
+	listen: (fn) =>
+		@l[fn] = fn
+
+	set: (new_val, defer) =>
+		old_val = @v
+		if old_val != new_val
+			for _, fn in pairs @l
+				fn new_val, old_val
+			@v = new_val
+		if fn = @l[new_val] then fn!
+		if defer
+			error "not yet implemented (needs coroutines)"
+		new_val -- why do I return new_val?
+
+	-- compute: (..., fwd_fn) =>
+	--     CO @, ..., fwd_fn
+	-- distribute: (..., fwd_fn, bak_fn) => DO @, ..., fwd_fn, bak_fn
+	transform: (fwd_fn, bak_fn) => TO @, fwd_fn, bak_fn
+
+	un: (fn) =>
+		if fn == nil
+			@l = setmetatable({}, {__mode: 'k'})
+		elseif "function" == type fn
+			@l[fn] = nil
+		else error "whoops"
+}
+
+
+--[[
+export CO = do
+	CO = setmetatable {
+		__base: O_generic
+		__init: (fwd_fn, ...) =>
+			@l = setmetatable({}, {__mode: 'k'})
+			@vv = {}
+			for i = 1, select('#', ...)
+				o = select(i, ...)
+				@vv[i] = o.v
+				o (v) ->
+					if v != @vv[i]
+						@vv[i] = v
+						new_val = fwd_fn unpack @vv
+						@set new_val
+			new_val = fwd_fn unpack @vv
+			@set new_val
+
+
+		-- static
+		count: 0
+		hello: -> print "CO HELLO"
+	}, {
+		__index: O_generic
+		__call: (...) =>
+			print "new CO! cur: " .. CO.count
+			new_o = setmetatable({}, {
+				__call: (new_val, defer) =>
+					if "function" == type new_val -- add callback
+						@listen new_val
+						if not defer
+							new_val @v
+						new_val
+					elseif new_val != nil -- set value
+						--o\set bak_fn new_val
+						print "!!! no way to distribute the value back to source os. DO is prolly what you'rer looking for"
+					else @v -- get value
+				__index: O_generic
+			})
+			CO.__init(new_o, ...)
+			CO.count += 1
+			new_o
+	}
+
+
+
+export TO = do
+	TO = setmetatable {
+		__init: (o, fwd_fn, bak_fn) =>
+			@l = setmetatable({}, {__mode: 'k'})
+			o (v) -> @set fwd_fn v
+		__base: O_generic
+
+		-- static
+		count: 0
+		hello: -> print "TO HELLO"
+	}, {
+		__index: O_generic
+		__call: (o, fwd_fn, bak_fn) =>
+			print "new TO! cur: " .. TO.count
+			new_o = setmetatable({}, {
+				__call: (new_val, defer) =>
+					if is_fun new_val -- add callback
+						@listen new_val
+						if not defer
+							new_val @v
+						new_val
+					elseif new_val != nil -- set value
+						o\set bak_fn new_val
+					else @v -- get value
+				__index: O_generic
+			})
+			TO.__init(new_o, o, fwd_fn, bak_fn)
+			TO.count += 1
+			new_o
+	}
+]]
+
+
+plain_O = ->
+	new_o = setmetatable {
+		l: setmetatable {}, {__mode: 'k'}
+	}, {
+		__call: (a, b) =>
+			-- 0 = get value
+			-- 1, is_fun = add callback
+			-- 1, is_val = set value
+			-- 2, is_val, is_val = set value, defer
+			-- 2, is_val, is_fun = set listener for value
+			if is_fun a -- add callback
+				@listen a
+				if not b -- defer
+					a @v
+			elseif is_val a -- set value
+				if is_fun b -- value listener
+					@l[a] = b
+				else @set a, b
+			else @v -- get value
+		__index: O_generic
+	}
+	O.count += 1
+	new_o
+
+
+O = setmetatable {
+	init_val: (v, fn) =>
+		@v =  v
+		if fn != nil
+			@listen fn
+
+	init_obv: (o, listen) =>
+		@v = o.v
+		if listen
+			o (v) -> @set v
+
+	init_fun: (fn) =>
+		@listen fn
+
+	transform: (o, fwd_fn) =>
+		-- ...
+
+	__base: O_generic
+
+	-- static
+	count: 0
+	hello: -> print "O HELLO"
+}, {
+	__index: O_generic
+	__call: (...) =>
+		-- 0 = O (nil value) [nil]
+		-- 1, is_fun = O (nil value), add listener [listener]
+		-- 1, is_val = O (set value) [value]
+		-- 2, is_obv, is_fun = O [transform]
+		-- 2, is_val, if_fun = O (set value), add listener [listener]
+		-- 3, is_obv, is_fun, is_fun = O [settable transform]
+		-- 3+, ...is_obv, is_fun = O [compute]
+		-- 4+, ...is_obv, is_fun, is_fun = O [settable compute]
+
+		local new_o
+		n = select '#', ...
+		if n == 0
+			return plain_O!
+		elseif n == 1
+			a = select(1, ...)
+			new_o = plain_O!
+			if is_fun a
+				O.init_fun new_o, a
+			elseif is_obv a
+				O.init_obv new_o, a
+			elseif a != nil
+				O.init_val new_o, a
+			else
+				print("::", n, a)
+				debug.traceback!
+				print("traced")
+				error "oops"
+			-- return new_o
+		elseif n == 2
+			a = select(1, ...)
+			b = select(2, ...)
+			if (is_val a) and (is_fun b)
+				new_o = plain_O!
+				O.init_val new_o, a, b
+			else
+				-- transform
+				error("transform not yet implemented")
+				-- new_o = transform_O!
+		elseif n > 2
+			-- transform/compute
+			error("transform/compute not yet implemented")
+			for i = 1, n
+				a = select(i, ...)
+				-- if i == 1
+				-- elseif i
+
+
+		-- O.__init(new_o, ...)
+		-- print "new_o", new_o.v
+		new_o
+}
+
+O.unittest = ->
+	height_changed = 0
+	Screen = {}
+	Screen.w = O 800
+	-- Screen.h = O 600
+	Screen.h = O 600, (h) -> height_changed += 1
+
+	SideBar = {
+		w: O 200
+		h: O Screen.h
+		border: O 2
+	}
+
+	-- Viewport = {
+	--     w: O Screen.w, SideBar.w, SideBar.border, (sw, bw, border) -> sw - bw - border
+	--     h: O Screen.h
+	-- }
+
+	-- Screen.ratio = O Screen.w, Screen.h, (w, h) -> w / h
+
+	ensure.eq Screen.w.v, 800
+	ensure.eq Screen.w!, 800
+	ensure.eq Screen.h.v, 600
+	ensure.eq Screen.h!, 600
+	-- ensure.eq Screen.ratio.v, 800 / 600
+	-- ensure.eq Screen.ratio!, 800 / 600
+
+	ensure.eq height_changed, 0
+
+	Screen.w 1920
+	Screen.w 1080
+
+	-- ensure.eq height_changed, 1
+
+
+
+	cur = ""
+
+	Background = O "black"
+	Background "black", -> cur = "it's black!"
+	Background "white", -> cur = "it's white!"
+
+	ensure.eq Background!, "black"
+	ensure.eq cur, ""
+
+	Background "black"
+	ensure.eq cur, "it's black!"
+
+	Background "white"
+
+	ensure.eq Background!, "white"
+	ensure.eq cur, "it's white!"
+
+	update_called = 0
+	update = O (dt) -> update_called += 1
+
+O.unittest!
+
+another_test = ->
+	SideBar = OO {
+		w: 200
+		h: Screen.h
+		border: 2
+	}, (bar) ->
+		print "bar:: w: #{b.w}, h: #{b.h}, border: #{b.border}"
+
+	SideBar.w = 220
+	SideBar.h = Screen.h - 10
+
+export default O
+
+
+--thoughts
+-- I may want to keep LOVE as it is (unmodified) and make AliveScript a part of the total editor package
+-- I may want to store a function signature (or at lesast arg count) in @l
+-- I don't know if I like calling the callback immediately
+-- probaly instead of iterating over the callbacks with pairs, I'll want to make an iterator (that can yield)
+-- I prolly want to implement calling callbacks in steps/ticks, so look at coroutines: http://lua-users.org/wiki/CoroutinesAsEventHandlers
